@@ -1,0 +1,16 @@
+%h1.mb-5 Articles
+
+.container.mb-5
+  .row
+    - @articles.each do |article|
+      .col-4
+        .card.d-flex.h-100.p-3
+          %img{ src: article.img_url, class: 'card-img', id: article.name, 'data-target': '#', 'data-turbolinks-animate': article.id }
+          .article-body.text-left.my-4
+            %h3.mb-3= article.name
+            %p.align-self-center.text-left.mb-5= article.content
+
+          = link_to "Go to article", article, class: "btn btn-primary article-btn-link", 'data-turbolinks-scroll': 'true'
+
+= link_to "Back to home", root_path
+
