@@ -1,0 +1,24 @@
+%html{:lang => "en"}
+  !!!
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "NOODP", :name => "ROBOTS"}/
+    %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
+    %meta{ name:"turbolinks-cache-control", content:"no-preview"}
+
+
+    %title= "TB-Animations"
+    = stylesheet_pack_tag 'styles/vendor', media: "all", 'data-turbolinks-track': 'reload'
+    = stylesheet_pack_tag 'styles/theme', media: "all", 'data-turbolinks-track': 'reload'
+    = render "javascript"
+    = csrf_meta_tags
+    = csp_meta_tag
+
+  %body
+    %main.container.text-center.mb-lg.mt-3.pt-3
+      = yield
+
+    = yield :modals
+    = yield :javascript
+

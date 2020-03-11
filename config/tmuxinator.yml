@@ -1,0 +1,30 @@
+name: base-rails-repo
+root: ~/code/base-rails-repo/
+
+# Optional tmux socket
+# socket_name: foo
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+pre_window:
+  # Export all variables from the .env so NPM can have access to tokens
+  - source .env && export $(grep --regexp ^[A-Z] .env | cut -d= -f1) > /dev/null
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+windows:
+  - editor: vim
+  - guard:
+      layout: main-vertical
+      panes:
+        - bundle exec guard
+        -
+  - server: heroku local
+  - webpacker: WEBPACKER_DEV_SERVER_HOST=0.0.0.0 ./bin/webpack-dev-server
+  - console: bundle exec rails c
+  - terminal:
+

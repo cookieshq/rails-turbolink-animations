@@ -1,0 +1,10 @@
+- if flash.any?
+  .flashes.pb-3
+    - user_facing_flashes.each do |key, value|
+      %div{:class => "alert #{bootstrap_class_for(key)}"}
+        = value
+        %button.close{data: {dismiss: 'alert'}}
+          %span
+            &times;
+
+
