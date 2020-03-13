@@ -1,0 +1,32 @@
+// Animations
+.animate-slide-out-down {
+  animation: slide-out-down 0.2s;
+  animation-fill-mode: forwards;
+}
+@keyframes slide-out-down {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    visibility: hidden;
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slide-out-up 0.2s;
+}
+@keyframes slide-out-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0%, 0);
+  }
+}
