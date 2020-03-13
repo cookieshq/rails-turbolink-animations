@@ -5,6 +5,8 @@
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
 
+@import 'animations';
+
 * {
   -webkit-font-smoothing: antialiased;
 }
@@ -13,7 +15,7 @@
   margin-bottom: 0;
 }
 
-// Styles for testing
+// Styles for animation testing
 
 // Article#index
 .article-btn-link {
@@ -36,7 +38,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  //height: 450px;
+  height: 450px;
   object-fit: cover;
   object-position: top;
 }
@@ -51,12 +53,4 @@
   left: 0 !important;
   width: 100% !important;
   height: 450px !important;
-}
-
-html {
-  overflow: visible;
-}
-
-.mb-lg {
-  margin-bottom: 500px;
 }
