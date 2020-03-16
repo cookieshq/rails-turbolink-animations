@@ -32,22 +32,17 @@ export default function setupTransition() {
       // Run animations
       runAnimations(listToAnimate);
 
-      $(document).one('animationEndOut', () => {
-        console.log('ANIMATION END EVENT');
+      $(document).one('allAnimationEnd', () => {
         // ESlint says TB undefined
         // eslint-disable-next-line
         Turbolinks.visit(newUrl);
+        console.log('Animation end fired');
         _isAnimating = false;
+        listToAnimate = [[], []];
       });
     } else {
       console.log('Not animating');
     }
-  });
-
-  // Clean up function
-  $(document).on('turbolinks:before-cache', () => {
-    const els = $('[data-animate-out]');
-    removeAllAnimateClasses(els);
   });
 
   function addCustomElToList(event) {
@@ -68,6 +63,12 @@ export default function setupTransition() {
       });
     }
   }
+
+  // Clean up function
+  $(document).on('turbolinks:before-cache', () => {
+    const els = $('[data-animate-out], [class*=animate-]');
+    removeAllAnimateClasses(els);
+  });
 }
 
 // Utility functions

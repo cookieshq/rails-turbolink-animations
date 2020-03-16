@@ -1,48 +1,73 @@
 export default function runAnimations(elList) {
-  //let animationsFinished = 0;
+  let animationsFinished = 0;
   const totalAnimations = elList.flat().length;
+  let styleCache = {};
 
-  console.log('El list is ', elList, totalAnimations);
-  // Fire custom animations
+  // *** Fire custom animations *** \\
   $(elList[0]).each((ind, el) => {
-    console.log(el);
-    //const animationName = $(el).attr('data-custom-animation');
+    const animationName = $(el).attr('data-custom-animation');
     const targetElName = $(el).attr('data-custom-animation-target');
     const targetEl = $(`#${targetElName}`)[0];
 
     // Get position of el to copy
+    const posTop = $(targetEl).offset().top;
+    const posLeft = $(targetEl).offset().left;
+    const width = $(targetEl).width();
+    const height = $(targetEl).height();
 
-    // $(targetEl).addClass(animationName);
+    // Clone el
+    const newNode = $(targetEl).clone();
 
-    // $(targetEl).one(
-    //   'animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd',
-    //   function() {
-    //     animationsFinished++;
-    //     checkForAllFinished(el);
-    //   }
-    // );
+    // Cache & apply css
+    styleCache = {
+      position: 'absolute',
+      top: posTop,
+      left: posLeft,
+      width: width,
+      height: height
+    };
+    $(newNode).css(styleCache);
+    // Append
+    $('body').append(newNode);
 
-    console.log(targetEl);
+    // Add event listener
+    $(newNode).one(
+      'animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd',
+      function() {
+        animationsFinished++;
+        checkForAllFinished(targetEl);
+      }
+    );
 
-    //$(el).addClass($(el).attr(`data-animate-out`));
-
-    // $(el).one(
-    //   'animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd',
-    //   function() {
-    //     animationsFinished++;
-    //     checkForAllFinished(el);
-    //   }
-    // );
+    // Run animation
+    $(newNode).addClass(animationName);
   });
 
-  // function checkForAllFinished(el) {
-  //   if (animationsFinished === totalAnimations) {
-  //     const event = new CustomEvent(`animationEndout`, {
-  //       bubbles: true,
-  //       cancelable: true
-  //     });
+  // *** Fire general animations *** \\
+  let timer = 0;
+  $(elList[1]).each((ind, el) => {
+    $(el).one(
+      'animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd',
+      () => {
+        animationsFinished++;
+        checkForAllFinished(el);
+      }
+    );
 
-  //     el.dispatchEvent(event);
-  //   }
-  // }
+    setTimeout(() => {
+      $(el).addClass($(el).attr('data-animate-out'));
+    }, timer);
+    timer += 100;
+  });
+
+  function checkForAllFinished(el) {
+    if (animationsFinished === totalAnimations) {
+      const event = new CustomEvent(`allAnimationEnd`, {
+        bubbles: true,
+        cancelable: true
+      });
+
+      el.dispatchEvent(event);
+    }
+  }
 }
