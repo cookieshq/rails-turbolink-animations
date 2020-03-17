@@ -1,10 +1,21 @@
+let styleCache = {};
 export default function runAnimations(elList) {
   let animationsFinished = 0;
-  const totalAnimations = elList.flat().length;
-  let styleCache = {};
+  const totalAnimations = elList[1].length + elList[2].length;
+
+  // *** Fire revert animations *** \\
+  // If there's a revert el & styles in cache
+  if (elList[0].length && Object.keys(styleCache).length > 0) {
+    const targetRevertEl = $(elList)[0][0];
+
+    $(targetRevertEl).removeAttr('data-animate-out');
+
+    $(targetRevertEl).css(styleCache);
+    styleCache = {};
+  }
 
   // *** Fire custom animations *** \\
-  $(elList[0]).each((ind, el) => {
+  $(elList[1]).each((ind, el) => {
     const animationName = $(el).attr('data-custom-animation');
     const targetElName = $(el).attr('data-custom-animation-target');
     const targetEl = $(`#${targetElName}`)[0];
@@ -26,7 +37,11 @@ export default function runAnimations(elList) {
       width: width,
       height: height
     };
+    console.log(newNode[0]);
+    //console.log($(newNode).css());
     $(newNode).css(styleCache);
+
+    $(newNode).attr('data-custom-node');
     // Append
     $('body').append(newNode);
 
@@ -45,7 +60,7 @@ export default function runAnimations(elList) {
 
   // *** Fire general animations *** \\
   let timer = 0;
-  $(elList[1]).each((ind, el) => {
+  $(elList[2]).each((ind, el) => {
     $(el).one(
       'animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd',
       () => {
@@ -60,8 +75,10 @@ export default function runAnimations(elList) {
     timer += 100;
   });
 
+  // Fire event once all animations have finished
   function checkForAllFinished(el) {
     if (animationsFinished === totalAnimations) {
+      console.log('Check finished');
       const event = new CustomEvent(`allAnimationEnd`, {
         bubbles: true,
         cancelable: true

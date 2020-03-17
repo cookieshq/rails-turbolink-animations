@@ -3,7 +3,8 @@ import runAnimations from './transition-animations/run-animations.js';
 export default function setupTransition() {
   let _isAnimating = false;
   // Create list of el nodes to animate
-  let listToAnimate = [[], []];
+  let listToAnimate = [[], [], []];
+  let urlCache;
 
   $(document).on('turbolinks:load', () => {
     _isAnimating = false;
@@ -23,6 +24,8 @@ export default function setupTransition() {
       const els = $('[class*=animate]');
       removeAllAnimateClasses(els);
 
+      addCustomRevertElToList(newUrl);
+
       // *** Custom animations *** \\
       addCustomElToList(event);
 
@@ -33,24 +36,32 @@ export default function setupTransition() {
       runAnimations(listToAnimate);
 
       $(document).one('allAnimationEnd', () => {
+        urlCache = window.location.href;
         // ESlint says TB undefined
         // eslint-disable-next-line
         Turbolinks.visit(newUrl);
         console.log('Animation end fired');
         _isAnimating = false;
-        listToAnimate = [[], []];
+        listToAnimate = [[], [], []];
       });
     } else {
       console.log('Not animating');
     }
   });
 
+  function addCustomRevertElToList(newUrl) {
+    // If user navigates back to prev page
+    if ($('[data-revert-from-cache').length && urlCache === newUrl) {
+      listToAnimate[0].push($('[data-revert-from-cache]')[0]);
+    }
+  }
+
   function addCustomElToList(event) {
     // Get element that triggered page load
     const el = event.target.activeElement;
 
     if ($(el).attr('data-custom-animation')) {
-      listToAnimate[0].push(el);
+      listToAnimate[1].push(el);
     }
   }
 
@@ -59,7 +70,7 @@ export default function setupTransition() {
 
     if (generalAnimationList.length > 0) {
       $(generalAnimationList).each((ind, el) => {
-        listToAnimate[1].push(el);
+        listToAnimate[2].push(el);
       });
     }
   }
@@ -68,11 +79,11 @@ export default function setupTransition() {
   $(document).on('turbolinks:before-cache', () => {
     const els = $('[data-animate-out], [class*=animate-]');
     removeAllAnimateClasses(els);
+    //$('[data-custom-node]').remove();
   });
 }
 
 // Utility functions
-
 function removeAllAnimateClasses(els) {
   $(els).removeClass(function(index, className) {
     return (className.match(/(^|\s)animate-\S+/g) || []).join(' ');
