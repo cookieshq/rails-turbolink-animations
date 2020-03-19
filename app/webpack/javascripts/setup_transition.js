@@ -9,8 +9,16 @@ export default function setupTransition() {
   // Caches
   let urlCache;
   let styleCache = {};
+  const animationClassName =
+    '[data-animate-out], [data-custom-animation], [data-revert-from-cache]';
 
   $(document).on('turbolinks:load', () => {
+    const els = $('[data-animate-in]');
+
+    $(els).each((ind, el) => {
+      $(el).addClass($(el).attr('data-animate-in'));
+    });
+
     _isAnimating = false;
   });
 
@@ -19,33 +27,35 @@ export default function setupTransition() {
   });
 
   $(document).on('turbolinks:before-visit', e => {
-    if (!_isAnimating) {
-      _isAnimating = true;
+    if ($(animationClassName).length) {
+      if (!_isAnimating) {
+        _isAnimating = true;
 
-      // Prevent navigation
-      e.preventDefault();
+        // Prevent navigation
+        e.preventDefault();
 
-      // Get new url
-      const newUrl = event.data.url;
+        // Get new url
+        const newUrl = event.data.url;
 
-      // Remove any trailing animation classes
-      const els = $('[class*=animate]');
-      removeAllAnimateClasses(els);
+        // Remove any trailing animation classes
+        const els = $('[class*=animate]');
+        removeAllAnimateClasses(els);
 
-      getCustomRevertEls(newUrl);
+        getCustomRevertEls(newUrl);
 
-      // *** Custom animations *** \\
-      addCustomElToList(event);
+        // *** Custom animations *** \\
+        addCustomElToList(event);
 
-      // *** General animations *** \\
-      addGeneralElsToList();
+        // *** General animations *** \\
+        addGeneralElsToList();
 
-      // Run animations
-      runAnimations(elsToAnimate);
+        // Run animations
+        runAnimations(elsToAnimate);
 
-      $(document).one('allAnimationEnd', event => {
-        navigateToNewPage(event, newUrl);
-      });
+        $(document).one('allAnimationEnd', event => {
+          navigateToNewPage(event, newUrl);
+        });
+      }
     }
   });
 
@@ -88,10 +98,21 @@ export default function setupTransition() {
   }
 
   function getCustomRevertEls(newUrl) {
-    // If user navigates back to prev page
-    if ($('[data-revert-from-cache').length && urlCache === newUrl) {
-      elsToRevert.push($('[data-revert-from-cache]')[0]);
-    }
+    const elList = $('[data-revert-from-cache');
+
+    $(elList).each((ind, el) => {
+      if (urlCache === newUrl) {
+        // Animate revert styles
+        elsToRevert.push(el);
+      } else {
+        // Animate fallback style
+        if ($(el).attr('data-animate-fallback')) {
+          const animationName = $(el).attr('data-animate-fallback');
+          $(el).attr('data-animate-out', animationName);
+          console.log(el);
+        }
+      }
+    });
   }
 
   function addCustomElToList(event) {
@@ -130,7 +151,7 @@ export default function setupTransition() {
   $(document).on('turbolinks:before-cache', () => {
     const els = $('[data-animate-out], [class*=animate-]');
     removeAllAnimateClasses(els);
-    $('[data-revert-from-cache]').show();
+    //$('[data-revert-from-cache]').show();
   });
 }
 
