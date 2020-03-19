@@ -88,10 +88,21 @@ export default function setupTransition() {
   }
 
   function getCustomRevertEls(newUrl) {
-    // If user navigates back to prev page
-    if ($('[data-revert-from-cache').length && urlCache === newUrl) {
-      elsToRevert.push($('[data-revert-from-cache]')[0]);
-    }
+    const elList = $('[data-revert-from-cache');
+
+    $(elList).each((ind, el) => {
+      if (urlCache === newUrl) {
+        // Animate revert styles
+        elsToRevert.push(el);
+      } else {
+        // Animate fallback style
+        if ($(el).attr('data-animate-fallback')) {
+          const animationName = $(el).attr('data-animate-fallback');
+          $(el).attr('data-animate-out', animationName);
+          console.log(el);
+        }
+      }
+    });
   }
 
   function addCustomElToList(event) {
@@ -130,7 +141,7 @@ export default function setupTransition() {
   $(document).on('turbolinks:before-cache', () => {
     const els = $('[data-animate-out], [class*=animate-]');
     removeAllAnimateClasses(els);
-    $('[data-revert-from-cache]').show();
+    //$('[data-revert-from-cache]').show();
   });
 }
 
