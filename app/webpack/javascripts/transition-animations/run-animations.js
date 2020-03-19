@@ -65,7 +65,6 @@ export default function runAnimations(elList) {
         cancelable: true,
         detail: styleCache
       });
-
       el.dispatchEvent(event);
     }
   }
