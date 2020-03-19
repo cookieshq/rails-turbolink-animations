@@ -6,7 +6,6 @@
 //
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
-import setupTransition from '../javascripts/setup_transition';
+import setupAnimations from '../javascripts/setup_animations';
 
-
-setupTransition();
+setupAnimations();

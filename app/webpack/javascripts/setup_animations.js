@@ -1,6 +1,6 @@
 import runAnimations from './transition-animations/run-animations.js';
 
-export default function setupTransition() {
+export default function setupAnimations() {
   // State variables
   let _isAnimating = false;
   // Create list of el nodes to animate
