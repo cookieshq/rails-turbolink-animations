@@ -1,5 +1,5 @@
-%img{ src: @article.img_url, class: 'show-bg-img', 'data-revert-from-cache': true, 'data-animate-fallback': 'animate-slide-out-down', id: "card-img-#{@article.id}" }
-.container.show-content-container.text-center.mw-50{'data-animate-out': 'animate-slide-out-down', class: 'animate-slide-in-up'}
+%img{ src: @article.img_url, class: 'show-bg-img', id: "card-img-#{@article.id}", data: {'revert-from-cache': true, 'animate-fallback': 'animate-slide-out-down'} }
+.container.show-content-container.text-center.mw-50{ data: {'animate-in': 'animate-slide-in-up', 'animate-out': 'animate-slide-out-down' }}
   %h1.mb-5= @article.name
   %p.w-75.mx-auto= @article.content
 

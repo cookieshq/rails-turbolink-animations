@@ -13,6 +13,12 @@ export default function setupTransition() {
     '[data-animate-out], [data-custom-animation], [data-revert-from-cache]';
 
   $(document).on('turbolinks:load', () => {
+    const els = $('[data-animate-in]');
+
+    $(els).each((ind, el) => {
+      $(el).addClass($(el).attr('data-animate-in'));
+    });
+
     _isAnimating = false;
   });
 
