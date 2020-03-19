@@ -9,6 +9,8 @@ export default function setupTransition() {
   // Caches
   let urlCache;
   let styleCache = {};
+  const animationClassName =
+    '[data-animate-out], [data-custom-animation], [data-revert-from-cache]';
 
   $(document).on('turbolinks:load', () => {
     _isAnimating = false;
@@ -19,33 +21,35 @@ export default function setupTransition() {
   });
 
   $(document).on('turbolinks:before-visit', e => {
-    if (!_isAnimating) {
-      _isAnimating = true;
+    if ($(animationClassName).length) {
+      if (!_isAnimating) {
+        _isAnimating = true;
 
-      // Prevent navigation
-      e.preventDefault();
+        // Prevent navigation
+        e.preventDefault();
 
-      // Get new url
-      const newUrl = event.data.url;
+        // Get new url
+        const newUrl = event.data.url;
 
-      // Remove any trailing animation classes
-      const els = $('[class*=animate]');
-      removeAllAnimateClasses(els);
+        // Remove any trailing animation classes
+        const els = $('[class*=animate]');
+        removeAllAnimateClasses(els);
 
-      getCustomRevertEls(newUrl);
+        getCustomRevertEls(newUrl);
 
-      // *** Custom animations *** \\
-      addCustomElToList(event);
+        // *** Custom animations *** \\
+        addCustomElToList(event);
 
-      // *** General animations *** \\
-      addGeneralElsToList();
+        // *** General animations *** \\
+        addGeneralElsToList();
 
-      // Run animations
-      runAnimations(elsToAnimate);
+        // Run animations
+        runAnimations(elsToAnimate);
 
-      $(document).one('allAnimationEnd', event => {
-        navigateToNewPage(event, newUrl);
-      });
+        $(document).one('allAnimationEnd', event => {
+          navigateToNewPage(event, newUrl);
+        });
+      }
     }
   });
 
