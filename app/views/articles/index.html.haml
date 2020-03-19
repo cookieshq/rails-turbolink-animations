@@ -1,17 +1,17 @@
-%div{'data-animate-out': 'animate-slide-out-down', class: 'animate-slide-in-up'}
-  %h1.mb-5 Articles
+%div
+  %h1.mb-5{ data: {'animate-in': 'animate-slide-in-up', 'animate-out': 'animate-slide-out-down' }} Articles
 
   .container.mb-5
     .row
       - @articles.each do |article|
         .col-4
-          .card.d-flex.h-100.p-3
-            %img{ src: article.img_url, class: 'card-img' }
+          .card.d-flex.h-100.p-3{ data: {'animate-in': 'animate-fade-in-center', 'animate-out': 'animate-fade-out-center'}}
+            %img{ src: article.img_url, class: 'card-img', id: "card-img-#{article.id}" }
             .article-body.text-left.my-4
               %h3.mb-3= article.name
-              %p.align-self-center.text-left.mb-5= article.content
+              %p.align-self-center.text-left.mb-5= article.content.truncate(100)
 
-            = link_to "Go to article", article, class: "btn btn-primary article-btn-link"
+            = link_to "Go to article", article, class: "btn btn-primary article-btn-link", data: {'custom-animation': 'animate-to-fullscreen', 'custom-animation-target': "card-img-#{article.id}"}
 
-  = link_to "Back to home", root_path
+  = link_to "Back to home", root_path, data: {'animate-in': 'animate-slide-in-up', 'animate-out': 'animate-slide-out-down'}
 

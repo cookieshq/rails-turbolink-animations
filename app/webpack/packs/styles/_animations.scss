@@ -1,6 +1,6 @@
 // Animations
 .animate-slide-out-down {
-  animation: slide-out-down 0.2s;
+  animation: slide-out-down 0.4s ease;
   animation-fill-mode: forwards;
 }
 @keyframes slide-out-down {
@@ -17,7 +17,7 @@
 }
 
 .animate-slide-in-up {
-  animation: slide-out-up 0.2s;
+  animation: slide-out-up 0.4s ease;
 }
 @keyframes slide-out-up {
   from {
@@ -28,5 +28,52 @@
   to {
     opacity: 1;
     transform: translate3d(0, 0%, 0);
+  }
+}
+
+.animate-fade-in-center {
+  animation: fade-in-center 0.4s ease;
+  animation-fill-mode: forwards;
+}
+@keyframes fade-in-center {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-out-center {
+  animation: fade-out-center 0.4s ease;
+  animation-fill-mode: forwards;
+}
+@keyframes fade-out-center {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+// Custom animations
+.animate-to-fullscreen {
+  animation: to-fullscreen 0.4s ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes to-fullscreen {
+  to {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 400px;
   }
 }
