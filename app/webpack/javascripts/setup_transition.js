@@ -5,9 +5,29 @@ export default function setupTransition() {
   // Create list of el nodes to animate
   let listToAnimate = [[], [], []];
   let urlCache;
+  let elsToRemove = [];
 
   $(document).on('turbolinks:load', () => {
+    console.log('This fired');
     _isAnimating = false;
+
+    setTimeout(() => {
+      $(elsToRemove).each((ind, el) => {
+        $(el).remove();
+      });
+      elsToRemove = [];
+    }, 1000);
+  });
+
+  $(document).on('turbolinks:before-render', () => {
+    const elsToRevert = $('[data-delete-on-load]');
+
+    if (elsToRevert.length) {
+      $(elsToRevert).each((ind, el) => {
+        $(event.data.newBody).append(el);
+        elsToRemove.push(el);
+      });
+    }
   });
 
   $(document).on('turbolinks:before-visit', e => {
@@ -79,7 +99,7 @@ export default function setupTransition() {
   $(document).on('turbolinks:before-cache', () => {
     const els = $('[data-animate-out], [class*=animate-]');
     removeAllAnimateClasses(els);
-    //$('[data-custom-node]').remove();
+    $('[data-revert-from-cache]').show();
   });
 }
 

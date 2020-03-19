@@ -6,7 +6,7 @@
       - @articles.each do |article|
         .col-4
           .card.d-flex.h-100.p-3{class: 'animate-fade-in-center', 'data-animate-out': 'animate-fade-out-center'}
-            %img{ src: article.img_url, class: 'card-img', id: "card-img-#{article.id}", 'data-turbolinks-permanent': '' }
+            %img{ src: article.img_url, class: 'card-img', id: "card-img-#{article.id}" }
             .article-body.text-left.my-4
               %h3.mb-3= article.name
               %p.align-self-center.text-left.mb-5= article.content.truncate(100)

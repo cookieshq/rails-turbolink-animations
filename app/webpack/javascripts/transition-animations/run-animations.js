@@ -10,7 +10,13 @@ export default function runAnimations(elList) {
 
     $(targetRevertEl).removeAttr('data-animate-out');
 
-    $(targetRevertEl).css(styleCache);
+    const newNode = $(targetRevertEl).clone();
+    $(newNode).attr('data-delete-on-load', '');
+    $('body').append(newNode);
+    $(targetRevertEl).hide();
+
+    $(newNode).animate(styleCache, 10);
+
     styleCache = {};
   }
 
@@ -37,8 +43,7 @@ export default function runAnimations(elList) {
       width: width,
       height: height
     };
-    console.log(newNode[0]);
-    //console.log($(newNode).css());
+
     $(newNode).css(styleCache);
 
     $(newNode).attr('data-custom-node');
