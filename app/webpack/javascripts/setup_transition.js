@@ -1,33 +1,21 @@
 import runAnimations from './transition-animations/run-animations.js';
 
 export default function setupTransition() {
+  // State variables
   let _isAnimating = false;
   // Create list of el nodes to animate
-  let listToAnimate = [[], [], []];
+  let elsToAnimate = [[], []];
+  let elsToRevert = [];
+  // Caches
   let urlCache;
-  let elsToRemove = [];
+  let styleCache = {};
 
   $(document).on('turbolinks:load', () => {
-    console.log('This fired');
     _isAnimating = false;
-
-    setTimeout(() => {
-      $(elsToRemove).each((ind, el) => {
-        $(el).remove();
-      });
-      elsToRemove = [];
-    }, 1000);
   });
 
   $(document).on('turbolinks:before-render', () => {
-    const elsToRevert = $('[data-delete-on-load]');
-
-    if (elsToRevert.length) {
-      $(elsToRevert).each((ind, el) => {
-        $(event.data.newBody).append(el);
-        elsToRemove.push(el);
-      });
-    }
+    revertElements();
   });
 
   $(document).on('turbolinks:before-visit', e => {
@@ -44,7 +32,7 @@ export default function setupTransition() {
       const els = $('[class*=animate]');
       removeAllAnimateClasses(els);
 
-      addCustomRevertElToList(newUrl);
+      getCustomRevertEls(newUrl);
 
       // *** Custom animations *** \\
       addCustomElToList(event);
@@ -53,26 +41,56 @@ export default function setupTransition() {
       addGeneralElsToList();
 
       // Run animations
-      runAnimations(listToAnimate);
+      runAnimations(elsToAnimate);
 
-      $(document).one('allAnimationEnd', () => {
-        urlCache = window.location.href;
-        // ESlint says TB undefined
-        // eslint-disable-next-line
-        Turbolinks.visit(newUrl);
-        console.log('Animation end fired');
-        _isAnimating = false;
-        listToAnimate = [[], [], []];
+      $(document).one('allAnimationEnd', event => {
+        navigateToNewPage(event, newUrl);
       });
-    } else {
-      console.log('Not animating');
     }
   });
 
-  function addCustomRevertElToList(newUrl) {
+  function revertElements() {
+    if (elsToRevert.length) {
+      // Get the new element to transition to
+      const newBody = event.data.newBody;
+      const prevId = $(elsToRevert)
+        .eq(0)
+        .attr('id');
+      const elToReplace = $(newBody).find(`#${prevId}`)[0];
+
+      if (elToReplace) {
+        // Clone it
+        const newEl = $(elsToRevert)
+          .eq(0)
+          .clone();
+        // And add to body
+        $(newBody).append(newEl);
+
+        setTimeout(() => {
+          // Get transition duration from elements css
+          const duration =
+            $(newEl)
+              .css('transition-duration')
+              .replace(/s/g, '') * 1000;
+
+          // Use animate but to immediately apply styles to transition
+          $(newEl).animate(styleCache, 0, null, function() {
+            setTimeout(() => {
+              // Remove element after it's finished transitioning
+              $(this).remove();
+            }, duration);
+          });
+          // Small delay here to ensure the animation fires
+        }, 10);
+      }
+    }
+    elsToRevert = [];
+  }
+
+  function getCustomRevertEls(newUrl) {
     // If user navigates back to prev page
     if ($('[data-revert-from-cache').length && urlCache === newUrl) {
-      listToAnimate[0].push($('[data-revert-from-cache]')[0]);
+      elsToRevert.push($('[data-revert-from-cache]')[0]);
     }
   }
 
@@ -81,7 +99,7 @@ export default function setupTransition() {
     const el = event.target.activeElement;
 
     if ($(el).attr('data-custom-animation')) {
-      listToAnimate[1].push(el);
+      elsToAnimate[0].push(el);
     }
   }
 
@@ -90,9 +108,22 @@ export default function setupTransition() {
 
     if (generalAnimationList.length > 0) {
       $(generalAnimationList).each((ind, el) => {
-        listToAnimate[2].push(el);
+        elsToAnimate[1].push(el);
       });
     }
+  }
+
+  function navigateToNewPage(event, newUrl) {
+    urlCache = window.location.href;
+    // ESlint says TB is undefined
+    // eslint-disable-next-line
+    Turbolinks.visit(newUrl);
+
+    if (!$.isEmptyObject(event.detail)) {
+      styleCache = event.detail;
+    }
+    _isAnimating = false;
+    elsToAnimate = [[], []];
   }
 
   // Clean up function
