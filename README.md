@@ -1,10 +1,37 @@
 # README
 
-[app_name]
+## How animations work
 
-[app description]
+### General animations
 
-## Getting started
+General animations are for simple animations on elements when a page loads/unloads.
+
+    `%p{ data: {'animate-in': 'animate-slide-up', 'animate-out': 'animate-slide-down' } }`
+
+The attribute values will be added as class names on load/unload respectively. 
+
+The app will wait for `data-animate-out` animations to finish before loading the next page, therefore you must css animations rather than transitions.
+
+### Custom animations
+
+Custom animations are for animating an element where a different element has triggered a page load.
+
+`%img{id: 'card-img-1' }
+= link_to "Next page", next_page_path, data: {'custom-animation': 'animate-to-fullscreen', 'custom-animation-target': 'card-img-1'}`
+
+`data-custom-animation` value will be applied to the element that has the id of `data-custom-animation-target`
+
+### Revert animations
+
+Revert animations apply when an element had a custom animation applied on the previous page and the user navigates back. It must keep the same id.
+
+`%img{ id: "card-img-1", data: {'revert-from-cache': '', 'animate-fallback': 'animate-slide-out-down'} }`
+
+When loading the previous page, it will animate back to it's previous size and position.
+If navigating to a different page, the `data-animate-fallback` value will be added as a class instead.
+ 
+
+## Installation
 
 ### Requirements
 
