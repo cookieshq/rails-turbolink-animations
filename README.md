@@ -16,9 +16,9 @@ The app will wait for `data-animate-out` animations to finish before loading the
 
 Custom animations are for animating an element where a different element has triggered a page load.
 
-`%img{id: 'card-img-1' }
+`%img{id: 'card-img-1' }`
 
-= link_to "Next page", next_page_path, data: {'custom-animation': 'animate-to-fullscreen', 'custom-animation-target': 'card-img-1'}`
+`= link_to "Next page", next_page_path, data: {'custom-animation': 'animate-to-fullscreen', 'custom-animation-target': 'card-img-1'}`
 
 `data-custom-animation` value will be applied to the element that has the id of `data-custom-animation-target`
 
